@@ -2,8 +2,8 @@ import os
 from setuptools import setup, find_packages
 
 setup(
-    name="vectorDBpipe",
-    version="0.1.0",
+    name="vectordbpipe",  # Corrected to lowercase
+    version="0.1.1",      # Updated to a new version
     author="Yash Desai",
     author_email="desaisyash1000@gmail.com",
     description="A modular text embedding and vector database pipeline for local and cloud vector stores.",
