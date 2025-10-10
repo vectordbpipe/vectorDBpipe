@@ -14,9 +14,9 @@ setup(
     install_requires=[
         "PyYAML>=6.0",
         "faiss-cpu>=1.7.4",
-        "sentence-transformers==2.2.2",
-        "transformers==4.28.1",
-        "torch==2.0.1",
+        "sentence-transformers>=2.2.2",
+        "transformers>=4.28.1",
+        "torch>=2.2.0",  # Allow any version of torch from 2.2.0 onwards
         "torchvision",
         "chromadb>=0.4.22",
         "pinecone-client>=3.0.0",

@@ -1,190 +1,250 @@
-# vectorDBpipe
 
-**Version:** 0.1.0  
-**Author:** Yash Desai  
-**Email:** desaisyash1000@gmail.com  
 
----
+# **vectorDBpipe**
 
-A modular **text embedding and vector database pipeline** for local and cloud vector stores.  
-Designed to streamline text preprocessing, embedding generation, and semantic search with multiple backends such as **FAISS, Chroma, and Pinecone**.
+**Version:** 0.1.3
+**Author:** Yash Desai
+**Email:** [desaisyash1000@gmail.com](mailto:desaisyash1000@gmail.com)
 
 ---
 
-## 🚀 Features
+### Overview
 
-- Load text from files or directories
-- Clean and preprocess text efficiently
-- Chunk text for large documents
-- Generate embeddings with **Sentence Transformers**
-- Store and retrieve embeddings using local (**FAISS**, **Chroma**) or cloud (**Pinecone**) vector databases
-- Integrated logging for pipeline operations
-- Fully modular and extendable design
+`vectorDBpipe` is a modular Python framework designed to simplify the creation of **text embedding and vector database pipelines**.
+It enables developers and researchers to efficiently process, embed, and retrieve large text datasets using modern vector databases such as **FAISS**, **Chroma**, or **Pinecone**.
+
+The framework follows a **layered, plug-and-play architecture**, allowing easy customization of data loaders, embedding models, and storage backends.
 
 ---
 
-## 💻 Installation
+## Key Features
 
-Install `vectorDBpipe` directly from PyPI:
+* Structured **data ingestion, cleaning, and chunking**
+* Embedding generation via **Sentence Transformers**
+* Pluggable vector storage engines: **FAISS**, **Chroma**, **Pinecone**
+* Unified CRUD API for inserting, searching, updating, and deleting embeddings
+* YAML-based configuration for quick workflow adjustments
+* Integrated logging and exception handling
+* End-to-end orchestration through a single pipeline interface
+
+---
+
+## Installation
+
+Install from PyPI:
 
 ```bash
-pip install vectorDBpipe
+pip install vectordbpipe
+```
+
+Or for local development:
+
+```bash
+git clone https://github.com/yashdesai023/vectorDBpipe.git
+cd vectorDBpipe
+pip install -e .
 ```
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
-`vectorDBpipe` uses a `config.yaml` file for configuration. You can customize paths, models, and vector database settings.
+The system reads settings from a YAML configuration file (`config.yaml`), which defines parameters for:
 
-### Pinecone API Key
+* **Data sources** (paths, formats)
+* **Embedding model** (e.g., `all-MiniLM-L6-v2`)
+* **Vector database backend** (FAISS, Chroma, or Pinecone)
+* **Index parameters and persistence options**
 
-If you use the `pinecone` vector database, you must provide your API key via an environment variable. The library will automatically load it.
+### Pinecone Setup (Optional)
 
-**Linux/macOS:**
+If you choose `pinecone` as your vector database, provide your API key as an environment variable.
+
+**macOS/Linux:**
+
 ```bash
-export PINECONE_API_KEY="YOUR_API_KEY"
+export PINECONE_API_KEY="your_api_key"
 ```
 
-**Windows:**
+**Windows PowerShell:**
+
 ```powershell
-$env:PINECONE_API_KEY="YOUR_API_KEY"
+$env:PINECONE_API_KEY="your_api_key"
 ```
 
 ---
 
-## ⚙️ Basic Usage
+## Quick Start
 
-### 1️⃣ Load Data and Generate Embeddings
+### 1. Data Loading and Embedding
 
 ```python
 from vectorDBpipe.data.loader import DataLoader
 from vectorDBpipe.embeddings.embedder import Embedder
 
-# Load all text files from a directory
 loader = DataLoader("data/")
-data = loader.load_all_files()
+documents = loader.load_all_files()
+texts = [d["content"] for d in documents]
 
-# Extract text contents
-texts = [d["content"] for d in data]
+embedder = Embedder(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embeddings = embedder.encode(texts)
 
-# Create embeddings
-embedder = Embedder()
-vectors = embedder.encode(texts)
-
-print("Vectors shape:", vectors.shape)
+print(f"Generated {len(embeddings)} embeddings with dimension {len(embeddings[0])}.")
 ```
 
 ---
 
-### 2️⃣ Text Cleaning and Chunking
+### 2. Text Cleaning and Chunking
 
 ```python
-from vectorDBpipe.logger.logging import setup_logger
 from vectorDBpipe.utils.common import clean_text, chunk_text
+from vectorDBpipe.logger.logging import setup_logger
 
-logger = setup_logger("TextPipeline")
+logger = setup_logger("Preprocess")
 
-text = "AI   is transforming   the world!"
-cleaned = clean_text(text)
+sample_text = "AI   is transforming   industries worldwide."
+cleaned = clean_text(sample_text)
 chunks = chunk_text(cleaned, chunk_size=50)
 
-logger.info(f"Cleaned text: {cleaned}")
+logger.info(f"Cleaned Text: {cleaned}")
 logger.info(f"Generated {len(chunks)} chunks.")
 ```
 
-**Output Example:**
-
-```
-INFO:TextPipeline: Cleaned text: ai is transforming the world!
-INFO:TextPipeline: Generated 1 chunks.
-```
-
 ---
 
-### 3️⃣ Modular Vector Storage & Retrieval
+### 3. Vector Storage and Retrieval
 
 ```python
-from vectorDBpipe.vectorstore.faiss_store import FAISSVectorStore
+from vectorDBpipe.vectordb.store import VectorStore
 
-# Initialize vector store
-vector_store = FAISSVectorStore(dim=384)
+store = VectorStore(backend="faiss", dim=384)
+store.insert_vectors(texts, embeddings)
 
-# Add embeddings and metadata
-metadata = [{"text": t} for t in texts]
-vector_store.add(vectors, metadata)
+query = "Applications of Artificial Intelligence"
+results = store.search_vectors(query, top_k=3)
 
-# Search similar text
-query = "Artificial Intelligence"
-results = vector_store.search(query, top_k=3)
-print("Search results:", results)
+print("Top Similar Results:")
+for r in results:
+    print("-", r)
 ```
 
 ---
 
-## 📝 Project Structure
+### 4. Full Pipeline Execution
+
+```python
+from vectorDBpipe.pipeline.text_pipeline import TextPipeline
+from vectorDBpipe.config.config_manager import ConfigManager
+
+config = ConfigManager().get_config()
+pipeline = TextPipeline(config)
+
+results = pipeline.run(["Machine learning enables predictive analytics."],
+                       query="What is machine learning?")
+print(results)
+```
+
+---
+
+## Project Structure
 
 ```
 vectorDBpipe/
-├── data/                      # Example dataset
+│
 ├── vectorDBpipe/
-│   ├── data/loader.py         # Data loading module
-│   ├── embeddings/embedder.py # Embedding generation
-│   ├── vectorstore/           # Vector DB modules (FAISS, Chroma, Pinecone)
-│   ├── logger/                # Logging setup
-│   └── utils/                 # Helper functions (cleaning, chunking, etc.)
+│   ├── config/                # Configuration management
+│   ├── data/                  # Data loading and preprocessing
+│   ├── embeddings/            # Embedding generation
+│   ├── vectordb/              # Vector database abstraction layer
+│   ├── pipeline/              # End-to-end workflow orchestration
+│   ├── utils/                 # Common utilities (cleaning, chunking)
+│   └── logger/                # Logging utilities
+│
 ├── tests/                     # Unit tests
-├── demo/                      # Demo Jupyter notebooks
+├── demo/                      # Example Jupyter notebooks
 ├── setup.py
 └── README.md
 ```
 
 ---
 
-## 📒 Logging & Debugging
+## Logging and Error Handling
 
-- Use `setup_logger()` to create named loggers for your pipeline.
-- Logs capture preprocessing, embedding, and vector store operations for easier debugging.
+Every module integrates with a centralized logging system to track operations and debug efficiently.
 
 ```python
-logger = setup_logger("TextPipeline")
-logger.info("Pipeline started...")
+from vectorDBpipe.logger.logging import setup_logger
+logger = setup_logger("VectorDBPipe")
+logger.info("Pipeline started successfully.")
 ```
 
 ---
 
-## ✅ Contribution Guide
+## Testing
 
-1. **Fork** the repository
-2. **Create a branch:**  
-   `git checkout -b feature/my-feature`
-3. **Add or modify code** with proper docstrings and type hints
-4. **Add tests** under `tests/`
-5. **Submit a Pull Request** with a detailed description
+Run the test suite to verify installation and functionality:
 
----
+```bash
+pytest -v --cov=vectorDBpipe
+```
 
-## 📖 Demo Notebooks
-
-- `demo/TextPipeline_demo.ipynb`: Step-by-step demonstration of data loading, preprocessing, embedding, storage, and search.
-- Visualize similarity search results using `pandas` or `matplotlib`.
+Coverage reports can be generated to ensure code reliability.
 
 ---
 
-## 📜 License
+## Example Notebook
 
-This project is licensed under the **MIT License**.  
-See [LICENSE](LICENSE) for more details.
+A demonstration notebook `vector_pipeline_demo.ipynb` is included, showcasing:
+
+* Document embedding and visualization
+* Vector similarity retrieval
+* PCA-based embedding visualization
+
+You can also run it directly in Google Colab:
+
+```markdown
+[Open in Colab](https://colab.research.google.com/github/yashdesai023/vectorDBpipe/blob/main/vector_pipeline_demo.ipynb)
+```
 
 ---
 
-## 🔗 Contact
+## Contributing
 
-**Author:** Yash Desai  
-**Email:** [desaisyash1000@gmail.com](mailto:desaisyash1000@gmail.com)  
-**GitHub:** [https://github.com/yashdesai023/vectorDBpipe](https://github.com/yashdesai023/vectorDBpipe)
+Contributions are welcome.
+Please ensure all pull requests include:
+
+* Clear, modular code
+* Type hints and docstrings
+* Unit tests covering new functionality
+
+**Development Workflow**
+
+```bash
+git checkout -b feature/my-feature
+# Add your changes
+pytest -v
+git commit -m "Add new feature"
+git push origin feature/my-feature
+```
+
+Then submit a pull request.
 
 ---
 
-*Ready for contributions and feedback! If you need a polished demo notebook, let me know!*
+## License
+
+Distributed under the **MIT License**.
+See the [LICENSE](LICENSE) file for full terms.
+
+---
+
+## Author & Contact
+
+**Yash Desai**
+Computer Science & Engineering (AI)
+Email: [desaisyash1000@gmail.com](mailto:desaisyash1000@gmail.com)
+GitHub: [yashdesai023](https://github.com/yashdesai023)
+
+---
+
 
