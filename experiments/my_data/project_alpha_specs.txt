@@ -1,0 +1,4 @@
+Project Alpha Specifications:
+    The goal is to build a scalable vector search engine.
+    It must support Pinecone and ChromaDB.
+    The latency for search queries should be under 200ms.
