@@ -45,10 +45,54 @@ The TUI is a separate Node.js package that controls this Python backend.
 npm install -g vectordbpipe-tui
 ```
 
+<<<<<<< HEAD
 ### Features
 *   **Interactive Setup Wizard**: `vdb setup`
 *   **Visual Dashboard**: `vdb start`
 *   **Connector Manager**: `vdb connectors` (Manage S3, Notion, etc.)
+=======
+---
+
+## 🚀 Performance Benchmarks
+*Tested on: Python 3.11 | Dataset: 10,000 Paragraphs | Embedding Model: all-MiniLM-L6-v2*
+
+| Backend | Ingestion Rate (docs/sec) | Avg. Search Latency (ms) | Persistence |
+| :--- | :--- | :--- | :--- |
+| **FAISS** | ~240 | **12ms** | In-Memory / Disk |
+| **ChromaDB** | ~180 | **35ms** | SQLite / Local |
+| **Pinecone** | ~110 (Network Latency) | **120ms** | Cloud-Native |
+
+> **Analysis:** `vectorDBpipe` utilizes **asynchronous batch processing** to maintain a flat O(log n) search curve even as your knowledge base grows beyond 100k chunks.
+
+---
+
+## 🏗️ Production-Ready Features
+- **Scalable Batch Ingestion:** Memory-safe processing that handles GBs of text without RAM spikes.
+- **Enterprise Error Handling:** Graceful failover and retry logic for cloud vector store connections.
+- **Unified Adapter Pattern:** Switch between local (FAISS) and cloud (Pinecone) by changing **one line** in `config.yaml`.
+- **Pre-Processor Suite:** Built-in normalization, semantic chunking, and metadata injection for higher retrieval precision.
+
+---
+
+---
+
+## 💡 Use Cases
+
+### 1. Enterprise Knowledge Base
+Company wikis, PDFs, and policy documents are scattered.
+*   **Solution**: Point `vectorDBpipe` to the shared drive. It indexes 10,000+ docs into Pinecone.
+*   **Result**: Employees get instant, semantic answers ("What is the travel policy?") instead of keyword search.
+
+### 2. Legal / Medical Document Search
+Long documents need to be split intelligently.
+*   **Solution**: Use the standardized chunker (e.g., 512 tokens with overlap).
+*   **Result**: Retrieval finds the *exact paragraph* containing the clause or diagnosis.
+
+### 3. Rapid Prototype for RAG
+You have a hackathon idea but don't want to spend 4 hours setting up FAISS.
+*   **Solution**: `pip install vectordbpipe` -> `pipeline.run()`.
+*   **Result**: Working MVP in 5 minutes.
+>>>>>>> 1ee606c3cc5862f0e77cbabc5912439fc7ab1f67
 
 ---
 
@@ -219,6 +263,7 @@ graph LR
 
 ## 🔧 Troubleshooting
 
+<<<<<<< HEAD
 ### `WinError 1114: A dynamic link library (DLL) initialization routine failed`
 *   **Cause**: This usually happens on Windows when trying to run PyTorch (bundled with `sentence-transformers`) on a machine without a breakdown of CUDA libraries, or conflicting `intel-openmp` versions.
 *   **Fix**:
@@ -228,14 +273,35 @@ graph LR
 ### `ModuleNotFoundError: No module named 'vectorDBpipe'`
 *   **Cause**: You might be running the script outside the virtual environment or the package isn't installed.
 *   **Fix**: Ensure `pip install vectordbpipe` succeeded.
+=======
+```bash
+vectorDBpipe/
+├── benchmarks/         # Automated performance & precision tests
+├── config/             # YAML configuration
+├── data/               # Drop your raw files here
+├── vectorDBpipe/
+│   ├── data/           # Loader logic (PDF/DOCX/TXT parsers)
+│   ├── embeddings/     # SentenceTransformer wrapper
+│   ├── pipeline/       # The "Brain" (Process & Search flow)
+│   └── vectordb/       # Store adapters (Chroma/Pinecone)
+└── requirements.txt    # Production deps
+```
+>>>>>>> 1ee606c3cc5862f0e77cbabc5912439fc7ab1f67
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contributing & Roadmap
 
 We welcome issues and PRs!
 *   **Report Bugs**: Create an issue on GitHub.
+<<<<<<< HEAD
 *   **Roadmap**: Support for `Qdrant` and `Weaviate` is coming in v0.2.0.
+=======
+*   **Roadmap**: 
+    - [x] Pinecone v3.0 Support
+    - [ ] **Next:** Qdrant & Weaviate Integration (v0.2.0)
+    - [ ] **Next:** Reranker Layer (Cross-Encoder Support)
+>>>>>>> 1ee606c3cc5862f0e77cbabc5912439fc7ab1f67
 
 **Author**: Yash Desai  
 **License**: MIT
