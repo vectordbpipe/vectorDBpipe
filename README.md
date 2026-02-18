@@ -45,12 +45,11 @@ The TUI is a separate Node.js package that controls this Python backend.
 npm install -g vectordbpipe-tui
 ```
 
-<<<<<<< HEAD
 ### Features
 *   **Interactive Setup Wizard**: `vdb setup`
 *   **Visual Dashboard**: `vdb start`
 *   **Connector Manager**: `vdb connectors` (Manage S3, Notion, etc.)
-=======
+
 ---
 
 ## 🚀 Performance Benchmarks
@@ -74,8 +73,6 @@ npm install -g vectordbpipe-tui
 
 ---
 
----
-
 ## 💡 Use Cases
 
 ### 1. Enterprise Knowledge Base
@@ -92,7 +89,6 @@ Long documents need to be split intelligently.
 You have a hackathon idea but don't want to spend 4 hours setting up FAISS.
 *   **Solution**: `pip install vectordbpipe` -> `pipeline.run()`.
 *   **Result**: Working MVP in 5 minutes.
->>>>>>> 1ee606c3cc5862f0e77cbabc5912439fc7ab1f67
 
 ---
 
@@ -263,7 +259,6 @@ graph LR
 
 ## 🔧 Troubleshooting
 
-<<<<<<< HEAD
 ### `WinError 1114: A dynamic link library (DLL) initialization routine failed`
 *   **Cause**: This usually happens on Windows when trying to run PyTorch (bundled with `sentence-transformers`) on a machine without a breakdown of CUDA libraries, or conflicting `intel-openmp` versions.
 *   **Fix**:
@@ -273,7 +268,8 @@ graph LR
 ### `ModuleNotFoundError: No module named 'vectorDBpipe'`
 *   **Cause**: You might be running the script outside the virtual environment or the package isn't installed.
 *   **Fix**: Ensure `pip install vectordbpipe` succeeded.
-=======
+
+### Project Structure
 ```bash
 vectorDBpipe/
 ├── benchmarks/         # Automated performance & precision tests
@@ -286,7 +282,6 @@ vectorDBpipe/
 │   └── vectordb/       # Store adapters (Chroma/Pinecone)
 └── requirements.txt    # Production deps
 ```
->>>>>>> 1ee606c3cc5862f0e77cbabc5912439fc7ab1f67
 
 ---
 
@@ -294,14 +289,7 @@ vectorDBpipe/
 
 We welcome issues and PRs!
 *   **Report Bugs**: Create an issue on GitHub.
-<<<<<<< HEAD
-*   **Roadmap**: Support for `Qdrant` and `Weaviate` is coming in v0.2.0.
-=======
 *   **Roadmap**: 
     - [x] Pinecone v3.0 Support
     - [ ] **Next:** Qdrant & Weaviate Integration (v0.2.0)
     - [ ] **Next:** Reranker Layer (Cross-Encoder Support)
->>>>>>> 1ee606c3cc5862f0e77cbabc5912439fc7ab1f67
-
-**Author**: Yash Desai  
-**License**: MIT
