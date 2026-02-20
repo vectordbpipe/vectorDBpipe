@@ -1,0 +1,75 @@
+[2026-02-20 05:13:28] [INFO] Embedder: Initializing embedder with model: sentence-transformers/all-MiniLM-L6-v2
+[2026-02-20 05:13:36] [INFO] Embedder: Generated 45 embeddings.
+[2026-02-20 05:14:05] [INFO] Embedder: Initializing embedder with model: sentence-transformers/all-MiniLM-L6-v2
+[2026-02-20 05:14:06] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:14:07] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:14:07] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:14:08] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:14:08] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:14:09] [INFO] Embedder: Generated 14 embeddings.
+[2026-02-20 05:14:09] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:14:10] [INFO] Embedder: Generated 17 embeddings.
+[2026-02-20 05:14:11] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:14:11] [INFO] Embedder: Generated 17 embeddings.
+[2026-02-20 05:14:12] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:14:12] [INFO] Embedder: Generated 17 embeddings.
+[2026-02-20 05:14:13] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:14:13] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:14:14] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:14:14] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:14:15] [INFO] Embedder: Generated 17 embeddings.
+[2026-02-20 05:14:15] [INFO] Embedder: Generated 14 embeddings.
+[2026-02-20 05:14:16] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:14:16] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:15:06] [INFO] Embedder: Initializing embedder with model: sentence-transformers/all-MiniLM-L6-v2
+[2026-02-20 05:15:08] [INFO] Embedder: Generated 1 embeddings.
+[2026-02-20 05:15:08] [INFO] TextPipeline: Initializing TextPipeline with configuration
+[2026-02-20 05:15:08] [INFO] Embedder: Initializing embedder with model: sentence-transformers/all-MiniLM-L6-v2
+[2026-02-20 05:15:09] [WARNING] TextPipeline: 'run()' is deprecated and will be removed. Please use 'process()' instead. Calling process() now.
+[2026-02-20 05:15:09] [INFO] TextPipeline: Starting document processing pipeline...
+[2026-02-20 05:15:09] [INFO] TextPipeline: Loading data from: data/
+[2026-02-20 05:15:09] [INFO] TextPipeline: Found 1 documents to process.
+[2026-02-20 05:15:09] [INFO] TextPipeline: Processing batch of 1 chunks...
+[2026-02-20 05:15:09] [INFO] TextPipeline: Batch stored.
+[2026-02-20 05:15:09] [INFO] TextPipeline: Pipeline completed successfully! Processed 1 total chunks.
+[2026-02-20 05:23:21] [INFO] TextPipeline: Initializing TextPipeline with configuration
+[2026-02-20 05:23:21] [INFO] Embedder: Initializing embedder with model: sentence-transformers/all-MiniLM-L6-v2
+[2026-02-20 05:23:23] [WARNING] TextPipeline: 'run()' is deprecated and will be removed. Please use 'process()' instead. Calling process() now.
+[2026-02-20 05:23:23] [INFO] TextPipeline: Starting document processing pipeline...
+[2026-02-20 05:23:23] [INFO] TextPipeline: Loading data from: data/
+[2026-02-20 05:23:23] [INFO] TextPipeline: Found 1 documents to process.
+[2026-02-20 05:23:23] [INFO] TextPipeline: Processing batch of 1 chunks...
+[2026-02-20 05:23:23] [INFO] TextPipeline: Batch stored.
+[2026-02-20 05:23:23] [INFO] TextPipeline: Persisting vector store to disk...
+[2026-02-20 05:23:23] [INFO] TextPipeline: Pipeline completed successfully! Processed 1 total chunks.
+[2026-02-20 05:23:49] [INFO] Embedder: Initializing embedder with model: sentence-transformers/all-MiniLM-L6-v2
+[2026-02-20 05:23:51] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:23:52] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:23:52] [INFO] Embedder: Generated 14 embeddings.
+[2026-02-20 05:23:53] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:23:53] [INFO] Embedder: Generated 14 embeddings.
+[2026-02-20 05:23:54] [INFO] Embedder: Generated 19 embeddings.
+[2026-02-20 05:23:55] [INFO] Embedder: Generated 17 embeddings.
+[2026-02-20 05:23:55] [INFO] Embedder: Generated 17 embeddings.
+[2026-02-20 05:23:56] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:23:56] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:23:57] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:23:57] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:23:58] [INFO] Embedder: Generated 14 embeddings.
+[2026-02-20 05:23:59] [INFO] Embedder: Generated 18 embeddings.
+[2026-02-20 05:23:59] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:24:00] [INFO] Embedder: Generated 15 embeddings.
+[2026-02-20 05:24:00] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:24:01] [INFO] Embedder: Generated 16 embeddings.
+[2026-02-20 05:24:01] [INFO] Embedder: Generated 17 embeddings.
+[2026-02-20 05:24:02] [INFO] Embedder: Generated 17 embeddings.
+[2026-02-20 05:25:11] [INFO] TextPipeline: Initializing TextPipeline with configuration
+[2026-02-20 05:25:11] [INFO] Embedder: Initializing embedder with model: sentence-transformers/all-MiniLM-L6-v2
+[2026-02-20 05:25:12] [WARNING] TextPipeline: 'run()' is deprecated and will be removed. Please use 'process()' instead. Calling process() now.
+[2026-02-20 05:25:12] [INFO] TextPipeline: Starting document processing pipeline...
+[2026-02-20 05:25:12] [INFO] TextPipeline: Loading data from: data/
+[2026-02-20 05:25:12] [INFO] TextPipeline: Found 1 documents to process.
+[2026-02-20 05:25:12] [INFO] TextPipeline: Processing batch of 1 chunks...
+[2026-02-20 05:25:12] [INFO] TextPipeline: Batch stored.
+[2026-02-20 05:25:12] [INFO] TextPipeline: Persisting vector store to disk...
+[2026-02-20 05:25:12] [INFO] TextPipeline: Pipeline completed successfully! Processed 1 total chunks.

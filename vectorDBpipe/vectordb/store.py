@@ -32,6 +32,10 @@ class BaseVectorStore(ABC):
         """Delete a vector from DB."""
         pass
 
+    def persist(self):
+        """Persist changes to disk (if applicable)."""
+        pass
+
 
 # =======================
 # Local ChromaDB Handling (new PersistentClient API)
@@ -70,6 +74,10 @@ class ChromaVectorStore(BaseVectorStore):
     def delete_vector(self, vector_id):
         self.collection.delete(ids=[vector_id])
         logger.info(f"Deleted vector ID: {vector_id}")
+
+    def persist(self):
+        # Chroma handles persistence automatically via PersistentClient
+        pass
 
 
 # ======================
@@ -125,6 +133,10 @@ class PineconeVectorStore(BaseVectorStore):
     def delete_vector(self, vector_id):
         self.index.delete(ids=[vector_id])
         logger.info(f"Deleted vector ID: {vector_id}")
+
+    def persist(self):
+        # Pinecone is cloud-native, updates are immediate
+        pass
 
 
 # =====================
@@ -199,8 +211,12 @@ class FaissVectorStore(BaseVectorStore):
                 meta["id"] = f"id_{internal_id}"
             self.metadata_store[internal_id] = meta
 
+        # self.save_index()  <-- Removed for performance (batch processing)
+        logger.info(f"Inserted {len(vectors)} vectors into FAISS (in-memory)")
+
+    def persist(self):
+        """Explicitly save index to disk."""
         self.save_index()
-        logger.info(f"Inserted {len(vectors)} vectors into FAISS")
 
     def search_vectors(self, query_vector, top_k=5):
         if not self.index:

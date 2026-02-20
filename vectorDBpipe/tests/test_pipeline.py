@@ -11,6 +11,9 @@ class MockStore:
     def search_vectors(self, *args, **kwargs):
         return [{"score": 0.99, "text": "Test document"}]
 
+    def persist(self):
+        self.persisted = True
+
 
 def test_pipeline_run(monkeypatch):
     # Mock dependencies to avoid external API calls
@@ -24,6 +27,9 @@ def test_pipeline_run(monkeypatch):
 
     pipeline = TextPipeline()
     pipeline.run()
+
+    # Verify persist was called
+    assert getattr(pipeline.vector_store, "persisted", False)
 
     results = pipeline.search("Test document")
     assert results[0]["score"] > 0.9
