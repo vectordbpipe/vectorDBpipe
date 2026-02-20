@@ -1,6 +1,7 @@
 # Core ML + Vector Database
 chromadb>=0.5.0
 sentence-transformers>=3.0.1
+faiss-cpu>=1.7.4
 
 # Data Processing & Parsing
 beautifulsoup4>=4.12.2
