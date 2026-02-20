@@ -87,6 +87,10 @@ class TextPipeline:
                 self._embed_and_store(chunk_batch, metadata_batch)
                 total_chunks += len(chunk_batch)
 
+            # Persist changes to disk (critical for FAISS)
+            self.logger.info("Persisting vector store to disk...")
+            self.vector_store.persist()
+
             if total_chunks == 0:
                 self.logger.warning("No text chunks were generated after cleaning. Exiting process.")
             else:
