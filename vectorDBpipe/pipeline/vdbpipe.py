@@ -21,12 +21,29 @@ class VDBpipe(TextPipeline):
     
     def __init__(self, config_path="config.yaml", config_override=None):
         super().__init__(config_path, config_override)
+
+        # --- Defensive attribute initialization ---
+        # Guarantees all attributes exist regardless of which TextPipeline version
+        # is installed (old versions may not call _init_llm_provider, etc.)
+        if not hasattr(self, 'llm'):
+            self.llm = None
+        if not hasattr(self, 'embedder'):
+            self.embedder = None
+        if not hasattr(self, 'vector_store'):
+            self.vector_store = None
+        if not hasattr(self, 'loader'):
+            from vectorDBpipe.config.config_manager import ConfigManager
+            from vectorDBpipe.data.loader import DataLoader
+            cfg = self.config if hasattr(self, 'config') else ConfigManager(config_path, config_override)
+            data_dir = cfg.get("paths.data_dir", "data/")
+            self.loader = DataLoader(data_dir)
+
         self.logger.info("Initializing VDBpipe (Omni-RAG) Architecture...")
-        
+
         # Initialize the Local Knowledge Graph (NetworkX) for GraphRAG
         self.graph = nx.DiGraph()
-        self.page_index = {} # Vectorless Document Structure Store
-        
+        self.page_index = {}  # Vectorless Document Structure Store
+
     def ingest(self, data_path: str, batch_size: int = 100):
         """
         The Tri-Processing Ingestion Engine.
@@ -83,6 +100,24 @@ class VDBpipe(TextPipeline):
 
         self.logger.info(f"Omni-Ingestion complete! Embedded {total_chunks} chunks. Extracted {len(self.graph.nodes)} Graph Nodes.")
         return total_chunks
+
+    def _embed_and_store(self, chunks, docs, metadata):
+        """
+        VDBpipe override of _embed_and_store.
+        Version-safe: works even if old TextPipeline didn't initialize embedder/vector_store.
+        """
+        embedder = getattr(self, 'embedder', None)
+        vector_store = getattr(self, 'vector_store', None)
+
+        if embedder is None or vector_store is None:
+            self.logger.warning("Embedder or vector store not initialized — skipping vector storage.")
+            return
+
+        try:
+            embeddings = embedder.embed_batch(chunks)
+            vector_store.add(embeddings=embeddings, documents=docs, metadata=metadata)
+        except Exception as e:
+            self.logger.warning(f"embed_and_store failed: {e}")
 
     def _extract_structure_and_graph(self, source: str, content_sample: str):
         """Mock extraction of structures and entities to populate the PageIndex and Knowledge Graph."""
