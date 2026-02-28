@@ -13,8 +13,8 @@ class TextPipeline:
     Main pipeline for processing text documents and storing embeddings
     into a selected vector database (Chroma or Pinecone).
     """
-    def __init__(self, config_path="vectorDBpipe/config/config.yaml"):
-        self.config = ConfigManager(config_path)
+    def __init__(self, config_path="config.yaml", config_override=None):
+        self.config = ConfigManager(config_path, config_override=config_override)
         
         # Setup logger
         log_config = self.config.get('logging', {})
