@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="vectordbpipe",  # Corrected to lowercase
-    version="0.2.0",      # Updated Version for Omni-RAG Architecture
+    version="0.2.1",      # Hotfix: TextPipeline config_override compatibility
     author="Yash Desai",
     author_email="desaisyash1000@gmail.com",
     description="A modular text embedding and vector database pipeline for local and cloud vector stores.",
