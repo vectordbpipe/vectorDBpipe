@@ -109,6 +109,12 @@ class VDBpipe(TextPipeline):
                 elif llm_provider == 'sarvam':
                     from vectorDBpipe.llms.sarvam_client import SarvamLLMProvider
                     self.llm = SarvamLLMProvider(model_name=llm_model, api_key=llm_key)
+                elif llm_provider == 'google' or llm_provider == 'gemini':
+                    from vectorDBpipe.llms.google_client import GoogleLLMProvider
+                    self.llm = GoogleLLMProvider(model_name=llm_model, api_key=llm_key)
+                elif llm_provider == 'cohere':
+                    from vectorDBpipe.llms.cohere_client import CohereLLMProvider
+                    self.llm = CohereLLMProvider(model_name=llm_model, api_key=llm_key)
                 self.logger.info(f"VDBpipe initialized LLM: {llm_provider}")
             except Exception as e:
                 self.logger.warning(f"LLM init failed: {e}")
