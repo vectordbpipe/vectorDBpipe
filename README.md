@@ -11,9 +11,10 @@
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.8%2B-blue.svg" alt="Python 3.8+"/></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/></a>
   <a href="https://github.com/yashdesai023/vectorDBpipe/actions"><img src="https://github.com/yashdesai023/vectorDBpipe/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
-  <img src="https://img.shields.io/badge/version-0.2.2-brightgreen.svg" alt="Version 0.2.2"/>
-  <img src="https://img.shields.io/badge/tests-4%20passed-success.svg" alt="Tests 4 passed"/>
+  <img src="https://img.shields.io/badge/version-0.2.4-brightgreen.svg" alt="Version 0.2.4"/>
+  <img src="https://img.shields.io/badge/tests-39%20passed-success.svg" alt="Tests 39 passed"/>
   <img src="https://img.shields.io/badge/PyPI-vectordbpipe-blueviolet.svg" alt="PyPI"/>
+  <img src="https://img.shields.io/badge/TUI-npm%20vectordbpipe--tui-orange.svg" alt="npm TUI"/>
 </p>
 
 <p>
@@ -28,12 +29,13 @@
 
 - [What is vectorDBpipe?](#-what-is-vectordbpipe)
 - [Why vectorDBpipe?](#-why-vectordbpipe)
-- [What's New in v0.2.0 — Omni-RAG Architecture](#-whats-new-in-v020--omni-rag-architecture)
+- [What's New in v0.2.4](#-whats-new-in-v024)
 - [The 4 Omni-RAG Engines](#-the-4-omni-rag-engines)
 - [Tri-Processing Ingestion Pipeline](#-tri-processing-ingestion-pipeline)
 - [15+ Native Data Integrations](#-15-native-data-integrations)
 - [Architecture Overview](#-architecture-overview)
 - [Installation](#-installation)
+- [TUI — Terminal Interface](#-tui--terminal-interface)
 - [Configuration](#-configuration)
 - [Quickstart Guide](#-quickstart-guide)
 - [Advanced Usage](#-advanced-usage)
@@ -105,30 +107,27 @@ A developer currently has to integrate **4-6 separate libraries**, write coheren
 
 ---
 
-## 🆕 What's New in v0.2.0 — Omni-RAG Architecture
+## 🆕 What's New in v0.2.4
 
-This is a **major version release** introducing the complete Omni-RAG architectural overhaul.
+This is a **production-readiness release** with 11 major improvements, zero breaking changes.
 
 ### ✨ New Features
 
 | Feature | Description |
 |---|---|
-| 🧠 **OmniRouter** | Automatically classifies every query by intent and dispatches to the correct engine. No manual routing code needed. |
-| ⚡ **Tri-Processing Ingestion** | `ThreadPoolExecutor`-backed parallel pipeline. Embedding, structural indexing, and graph extraction run *simultaneously*. |
-| 🕸️ **GraphRAG Engine (Engine 3)** | Integrated `NetworkX` for local knowledge graph storage. Entity-relationship pairs extracted and stored during ingestion. |
-| 🗂️ **Vectorless Engine (Engine 2)** | A hierarchical `PageIndex` JSON structure allows holistic, chapter-level document comprehension without vector search. |
-| 🧩 **LangChain JSON Extraction (Engine 4)** | Pydantic-schema-driven structured output. Pass a Python dictionary, get back type-safe JSON. |
-| 🔌 **15+ Data Integrations** | Full loaders for PDF, DOCX, CSV, JSON, HTML, Markdown, XML, S3, Web URLs, and 6 SaaS connectors. |
-| 🧪 **PyTest Suite** | Comprehensive unit test coverage (`tests/test_vdbpipe.py`) with 4 core test cases using mocks. |
-| 📦 **Improved package exclusion** | TUI, Frontend, and Backend directories are cleanly excluded from the PyPI dist bundle. |
+| 🧠 **Semantic OmniRouter** | Replaced keyword matching with **cosine-similarity embedding routing**. Queries are embedded and scored against pre-computed intent prototypes per engine (threshold = 0.35). Falls back to keywords when no embedder is configured. |
+| 💾 **Graph + PageIndex Persistence** | `_persist_state()` auto-saves the knowledge graph and page index as JSON after every `ingest()`. `_load_state()` restores them on startup — **data now survives restarts**. |
+| 🌊 **Streaming LLM Responses** | `BaseLLMProvider.stream_response()` added with a default wrapper for all providers. `OpenAILLMProvider` implements real SSE token streaming. `VDBpipe.stream_query()` is a new generator method. New `POST /pipelines/chat/stream` SSE endpoint. |
+| 📄 **PPTX Loader** | `.pptx` files now supported via `python-pptx`. Text extracted slide-by-slide and ingested like any other document. |
+| ✂️ **Sentence-Boundary Chunking** | `chunk_text_sentences()` in `utils/common.py` — groups sentences into chunks respecting boundaries, with configurable overlap. Eliminates mid-sentence splits from fixed-size chunking. |
+| 🏗️ **VDBpipe Pure Composition** | `VDBpipe` no longer inherits from `TextPipeline`. It is a standalone class with providers as plain instance attributes. The `_safe_reinit()` hack is deleted. |
+| 🖥️ **TUI Improvements** | System Doctor runs 6 real runtime checks. Setup Wizard error screen fixed (was silently ignored). API key validation added before saving `config.yaml`. |
+| 🧪 **39 Unit Tests** | Test suite expanded from 4 → 39 tests across 12 classes. All mocked — no API keys or GPU needed. |
 
-### 🔧 Improvements over v0.1.x
-
-- `DataLoader` rewritten from scratch to support 15+ source types
-- `TextPipeline` now initializes `embedder` and `vector_store` with cleaner provider abstraction
-- `VDBpipe` is now the single orchestration layer, simplifying the public API
-- Dropped dependency on `langchain_core.pydantic_v1` (legacy), migrated to standard `pydantic`
-- Ingestion throughput improved by ~40% with parallel processing
+### 🐛 Bug Fixes
+- File upload isolation: uploads now go to `data/<user_id>/<uuid>_filename` (no collisions)
+- Backend pipeline cache evicted on config update
+- `finishSetup()` write error now shows error screen instead of silent fail
 
 ---
 
@@ -250,6 +249,7 @@ All three phases run **concurrently** — meaning there is minimal performance p
 | Plain Text | `.txt` | Built-in |
 | PDF Documents | `.pdf` | `PyMuPDF` (fitz) |
 | Word Documents | `.docx` | `docx2txt` |
+| PowerPoint | `.pptx` | `python-pptx` ✨ **New in v0.2.4** |
 | CSV Spreadsheets | `.csv` | Built-in |
 | JSON Files | `.json` | Built-in |
 | HTML Pages | `.html`, `.htm` | `BeautifulSoup4` |
@@ -293,14 +293,14 @@ vectorDBpipe/
 │
 ├── vectorDBpipe/                    # 📦 Core Python SDK Package
 │   │
-│   ├── __init__.py                  # Lazy-loading entry point (VDBpipe, TextPipeline)
+│   ├── __init__.py                  # Entry point (VDBpipe)
 │   │
 │   ├── pipeline/
-│   │   ├── vdbpipe.py               # ⭐ VDBpipe: Main orchestrator + 4 engines + OmniRouter
-│   │   └── text_pipeline.py         # TextPipeline: Base class, provider initialization
+│   │   ├── vdbpipe.py               # ⭐ VDBpipe: pure composition, 4 engines, Semantic OmniRouter, persistence
+│   │   └── text_pipeline.py         # TextPipeline: legacy (kept for compatibility)
 │   │
 │   ├── data/
-│   │   └── loader.py                # DataLoader: 15+ source integrations
+│   │   └── loader.py                # DataLoader: 15+ sources incl. PPTX (v0.2.4)
 │   │
 │   ├── embeddings/                  # Embedding provider wrappers
 │   │   ├── sentence_transformers.py
@@ -308,10 +308,11 @@ vectorDBpipe/
 │   │   └── cohere_embeddings.py
 │   │
 │   ├── llms/                        # LLM provider wrappers
-│   │   ├── openai_llm.py
-│   │   ├── sarvam_llm.py
-│   │   ├── anthropic_llm.py
-│   │   └── groq_llm.py
+│   │   ├── base.py                  # BaseLLMProvider + stream_response() (v0.2.4)
+│   │   ├── openai_client.py         # OpenAI — real SSE streaming (v0.2.4)
+│   │   ├── sarvam_client.py
+│   │   ├── anthropic_client.py
+│   │   └── groq_client.py
 │   │
 │   ├── vectordb/                    # Vector database connectors
 │   │   ├── chroma_db.py
@@ -323,28 +324,50 @@ vectorDBpipe/
 │   │   └── config_manager.py        # YAML + ENV configuration loader
 │   │
 │   ├── utils/
-│   │   └── common.py                # clean_text, chunk_text, list_files_in_dir
+│   │   └── common.py                # clean_text, chunk_text, chunk_text_sentences (v0.2.4)
 │   │
 │   └── logger/
 │       └── logging.py               # Structured logging setup
 │
 ├── tests/
-│   └── test_vdbpipe.py              # 🧪 PyTest Suite (4 core tests, all mocked)
+│   └── test_vdbpipe.py              # 🧪 39-test PyTest suite (v0.2.4), all mocked
 │
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml                   # CI: Runs pytest on every push/PR to main
-│       └── publish-to-pypi.yml      # CD: Publishes to PyPI on GitHub Release
+│       ├── ci.yml                   # CI: pytest on every push/PR to main
+│       └── publish-to-pypi.yml      # CD: publish to PyPI on GitHub Release
 │
-├── config.yaml                      # Default configuration file
-├── requirements.txt                 # Full dependency list
-├── requirements_dev.txt             # Development dependencies (pytest, etc.)
-├── setup.py                         # Package metadata and install config
-├── MANIFEST.in                      # Package inclusion/exclusion rules
-└── demo.ipynb                       # End-to-end demonstration notebook
+├── CHANGELOG.md
+├── config.yaml
+├── requirements.txt
+├── setup.py
+└── MANIFEST.in
 ```
 
 ---
+
+## 🖥 TUI — Terminal Interface
+
+The vectorDBpipe TUI is published **separately on npm** and auto-installs the Python package.
+
+```bash
+# Install globally
+npm install -g vectordbpipe-tui
+
+# Launch
+vdb
+```
+
+The TUI provides:
+- **Setup Wizard** — configure embedder, vector DB, and LLM with API key validation
+- **System Doctor** — 6 live runtime checks (Node.js, Python, pip package, config, internet, VectorDB)
+- **Ingest** — point at a folder or file, watch Tri-Processing run live
+- **Chat** — query with the Semantic OmniRouter; see which engine answered
+- **Graph View** — explore the extracted knowledge graph
+- **PageIndex** — browse the structural document index
+- **Structured Extract** — run Engine 4 with a custom JSON schema
+
+> The TUI communicates directly with the installed `vectordbpipe` Python package via `vdb_runner.py` — **no backend server required**.
 
 ## 📦 Installation
 
@@ -586,7 +609,7 @@ for source, structure in page_index.items():
 
 ### `VDBpipe(config_path, config_override)`
 
-The main orchestrator class. Inherits from `TextPipeline`.
+The main orchestrator class (pure composition — does **not** inherit `TextPipeline` as of v0.2.4).
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
@@ -643,9 +666,20 @@ Forces structured output using Engine 4 (LangChain Extract).
 
 ---
 
+### `pipeline.stream_query(user_query)` ✨ *New in v0.2.4*
+
+Streaming generator — yields LLM response tokens one at a time.
+
+```python
+for token in pipeline.stream_query("What are the key risks?"):
+    print(token, end="", flush=True)
+```
+
+---
+
 ### `pipeline._route_query(query)` *(internal)*
 
-Returns the engine code for a given query string.
+Returns the engine code for a given query string using **cosine-similarity semantic routing** (v0.2.4+).
 
 | Return Value | Engine |
 |---|---|
@@ -654,6 +688,16 @@ Returns the engine code for a given query string.
 | `"ENGINE_3"` | GraphRAG |
 
 ---
+
+### `chunk_text_sentences(text, max_tokens, overlap_sentences)` ✨ *New in v0.2.4*
+
+Sentence-boundary sliding-window chunker. Avoids splitting sentences mid-context.
+
+```python
+from vectorDBpipe.utils.common import chunk_text_sentences
+
+chunks = chunk_text_sentences(text, max_tokens=400, overlap_sentences=1)
+```
 
 ## ⚡ Performance Benchmarks
 
@@ -693,14 +737,24 @@ pip install -r requirements_dev.txt
 python -m pytest tests/test_vdbpipe.py -v
 ```
 
-**Expected output:**
+**Expected output (v0.2.4):**
 ```
-tests/test_vdbpipe.py::test_vdbpipe_initialization          PASSED  [ 25%]
-tests/test_vdbpipe.py::test_vdbpipe_ingest_tri_processing   PASSED  [ 50%]
-tests/test_vdbpipe.py::test_omnirouter_classification       PASSED  [ 75%]
-tests/test_vdbpipe.py::test_vector_rag_engine               PASSED  [100%]
+tests/test_vdbpipe.py::TestInitialization::test_has_required_attributes        PASSED [  2%]
+tests/test_vdbpipe.py::TestInitialization::test_is_not_text_pipeline_subclass  PASSED [  5%]
+tests/test_vdbpipe.py::TestIngestion::test_ingest_sets_loader_path             PASSED [ 10%]
+tests/test_vdbpipe.py::TestOmniRouter::test_summarize_routes_to_engine_2       PASSED [ 17%]
+tests/test_vdbpipe.py::TestOmniRouter::test_relationship_routes_to_engine_3    PASSED [ 23%]
+tests/test_vdbpipe.py::TestEngine1VectorRAG::test_returns_llm_answer           PASSED [ 33%]
+tests/test_vdbpipe.py::TestEngine2VectorlessRAG::test_returns_llm_answer       PASSED [ 41%]
+tests/test_vdbpipe.py::TestEngine3GraphRAG::test_populated_graph_calls_llm     PASSED [ 51%]
+tests/test_vdbpipe.py::TestEngine4StructuredExtract::test_returns_parsed_json  PASSED [ 56%]
+tests/test_vdbpipe.py::TestSentenceChunking::test_no_mid_sentence_splits       PASSED [ 76%]
+tests/test_vdbpipe.py::TestPPTXLoader::test_pptx_load_extracts_slide_text      PASSED [ 82%]
+tests/test_vdbpipe.py::TestPersistence::test_persist_state_creates_files       PASSED [ 84%]
+tests/test_vdbpipe.py::TestStreaming::test_stream_query_yields_tokens          PASSED [ 94%]
+... (39 total)
 
-========================================== 4 passed in 21.04s ==========================================
+=================== 39 passed in 206.59s (0:03:26) ===================
 ```
 
 ### Run with coverage report
@@ -736,8 +790,9 @@ Contributions are warmly welcomed! Please follow these steps:
 - [ ] Production OAuth wiring for SaaS connectors (Notion, Slack, GitHub)
 - [ ] Async ingestion support via `asyncio`
 - [ ] Qdrant and Weaviate vector database integrations
-- [ ] LLM streaming response support
-- [ ] More test coverage (edge cases, error handling)
+- [ ] More embedding providers (Cohere, Google Vertex)
+- [ ] Graph persistence to Neo4j / TigerGraph
+- [ ] Streaming support for Anthropic and Groq providers
 
 ### Code Style
 
@@ -749,9 +804,39 @@ Contributions are warmly welcomed! Please follow these steps:
 
 ## 📜 Changelog
 
-### v0.2.2 — Critical Hotfix Release (March 2026) ⭐ Latest
+### v0.2.4 — Production Readiness Release (March 2026) ⭐ Latest
 
-> **Hotfix** — Resolves critical pipeline initialization and engine routing bugs affecting all users of `config_override`.
+> 11 improvements: Semantic OmniRouter, Persistence, Streaming, PPTX, Sentence Chunking, VDBpipe refactor, Backend upgrade, 39 tests, TUI real diagnostics.
+
+**New:**
+- **Semantic OmniRouter** — embedding cosine-similarity routing replaces keyword matching
+- **Graph + PageIndex Persistence** — auto-save/load on every ingest (JSON)
+- **Streaming** — `stream_response()` on all LLMs; OpenAI real SSE; `/chat/stream` SSE endpoint
+- **PPTX Loader** — `.pptx` files via `python-pptx`
+- **Sentence-boundary chunking** — `chunk_text_sentences()` in `utils/common.py`
+- **VDBpipe pure composition** — no more `TextPipeline` inheritance, `_safe_reinit` deleted
+- **39-test suite** (was 4) — all mocked, no API keys required
+
+**Fixed:**
+- File upload isolation (per-user UUID prefix)
+- Setup Wizard now shows error screen on write failure
+- API key validated before saving config
+
+---
+
+### v0.2.3 — Hotfix (February 2026)
+
+> **Hotfix** — Missing `llms/__init__.py` caused `ImportError` on all LLM providers after PyPI install.
+
+**Fixed:**
+- Added missing `__init__.py` to `vectorDBpipe/llms/`
+- Pinned `chromadb>=0.5.0` for `PersistentClient` API compatibility
+
+---
+
+### v0.2.2 — Critical Hotfix (March 2026)
+
+> Resolves critical pipeline initialization and engine routing bugs.
 
 **Fixed:**
 - **Embedder `'NoneType' object has no attribute 'tokenize'`** — `TextPipeline` was using the legacy `model.name` config key instead of the new `embedding.model_name`. This caused `SentenceTransformer(None)` to be created, crashing all ingestion and queries. `_safe_reinit` now completely bypasses legacy keys and reinitializes all providers from `embedding`, `database`, and `llm` config directly.
